@@ -1,38 +1,53 @@
 #!/usr/bin/env python3
 """
-Async routine wait_n that takes in 2 int arguments (n and max_delay).
-It spawns wait_random n times with the specified max_delay.
-Returns the list of all the delays (float values) in ascending order.
+Asynchronous coroutines for concurrent operations.
+
+This module provides two asynchronous coroutines:
+- `wait_random`: Waits for a random delay between 0 and max_delay seconds.
+- `wait_n`: Spawns `wait_random` n times with a specified max_delay.
+
+These coroutines are intended for concurrent asynchronous operations.
+
 """
 
 import asyncio
+import random
 from typing import List
 
-# Import the wait_random coroutine from the previous file
-from 0-basic_async_syntax import wait_random
+
+async def wait_random(max_delay: int = 10) -> float:
+    """
+    Asynchronous coroutine that waits for a random delay between 0 and max_delay seconds
+    and eventually returns it.
+
+    Args:
+        max_delay (int): The maximum delay in seconds. Defaults to 10.
+
+    Returns:
+        float: The random delay.
+    """
+    random_delay: float = random.uniform(0, max_delay)
+    await asyncio.sleep(random_delay)
+    return random_delay
 
 
 async def wait_n(n: int, max_delay: int) -> List[float]:
     """
-    Async routine that spawns wait_random n times with the specified max_delay.
-    Returns the list of all the delays in ascending order.
+    Asynchronous coroutine that spawns `wait_random` n times with the specified max_delay.
 
     Args:
-        n (int): Number of times to spawn wait_random.
-        max_delay (int): The maximum delay in seconds for wait_random.
+        n (int): Number of times to spawn `wait_random`.
+        max_delay (int): The maximum delay in seconds.
 
     Returns:
         List[float]: List of delays in ascending order.
     """
-    # Use asyncio.gather to concurrently execute wait_random n times
-    delays = await asyncio.gather(*(wait_random(max_delay) for _ in range(n)))
-    
-    # Return the sorted list of delays
-    return sorted(delays)
+    delays = [await wait_random(max_delay) for _ in range(n)]
+    delays.sort()  # Sorting the list in ascending order
+    return delays
 
 
 if __name__ == "__main__":
-    # Test the wait_n coroutine
     print(asyncio.run(wait_n(5, 5)))
     print(asyncio.run(wait_n(10, 7)))
     print(asyncio.run(wait_n(10, 0)))
