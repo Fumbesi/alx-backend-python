@@ -17,7 +17,7 @@ async def task_wait_n(n: int, max_delay: int) -> List[asyncio.Task]:
         max_delay (int): The maximum delay in seconds.
 
     Returns:
-        List[asyncio.Task]: List of Tasks for task_wait_random.
+        List[asyncio.Task]: List of tasks for task_wait_random.
     """
     tasks = [task_wait_random(max_delay) for _ in range(n)]
     return tasks
@@ -29,9 +29,7 @@ if __name__ == "__main__":
     max_delay = 6
     result = asyncio.run(task_wait_n(n, max_delay))
 
-    # Wait for all tasks to complete
-    asyncio.run(asyncio.gather(*result))
+    # Print results
+    for task in asyncio.as_completed(result):
+        print(await task)
 
-    # Retrieve the results from completed tasks
-    delays = [task.result() for task in result]
-    print(delays)
